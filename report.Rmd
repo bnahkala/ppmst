@@ -1,0 +1,161 @@
+---
+title: "PPMST Alternative Analysis Outputs"
+# author: "Brady Nahkala"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: html_document
+params:
+  i: NA
+  p: NA
+  f: NA
+  a: NA
+  m: NA
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+```
+
+*The following was generated using the Prairie Pothole Management Support Tool (PPMST), an empirical risk assessment tool developed by researchers in the Department of Agricultural and Biosystems Engineering at Iowa State University.*
+
+# Metadata
+
+This report was generated at :
+```{r, echo=FALSE}
+format(Sys.time(), '%H:%M:%S, %m/%d/%Y')
+```
+
+for the following field:
+```{r, echo=FALSE}
+params$f
+```
+
+
+```{r, echo=FALSE}
+# The following map is a screenshot of the field with potential drawings including:
+# 1. A prairie pothole delineation
+# 2. A pothole watershed delineation
+# 3. A measurement of flow paths within the watershed
+# params$m
+```
+
+
+### Summary of Inputs
+```{r, echo=FALSE}
+knitr::kable(
+  params$i,
+  caption = "The following table summarizes the current inputs used in the PPMST:",
+  col.names = c(
+    "Scenario",
+    "County ID",
+    "Field ID",
+    "Pothole Area (ha)",
+    "Watershed Area (ha)",
+    "Maximum Depth (m)",
+    "Watershed Relief (m)",
+    "Maximum Flow Path (m)",
+    "LULC of Pothole",
+    "LULC of Field",
+    "Drainage",
+    "Tillage"
+  ),
+  align = 'lllcccccccc',
+  width = 60
+) %>%
+  kable_styling()
+```
+
+# Results
+
+### Flood Risk
+
+Figure 1: Predicted flood risk for all scenarios without uncertainty.
+
+```{r, echo=FALSE}
+ggplot2::ggplot(params$p, aes(x = Scenario, y = Risk.Prediction, fill=Risk.Prediction)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Scenario",
+       y = "Calculated Risk")+
+      scale_fill_gradient2(
+        low = "#66a182", 
+        mid = "#edae49",
+        high = "#d1495b",
+        midpoint = 4)+
+      theme(legend.position = "none")
+```
+
+
+```{r, echo=FALSE}
+knitr::kable(
+  params$p,
+  caption = "The following table summarizes the flood risk prediction, with uncertainty, for the input scenarios above.",
+  col.names = c(
+    "Scenario",
+    "County ID",
+    "Field ID",
+    "Risk Prediction",
+    "Minimum Risk",
+    "Maximum Risk"
+  ),
+  align = 'lllccc',
+  width = 60
+) %>%
+  kable_styling()
+```
+
+
+```{r, echo=F}
+### Economic Evaluation
+
+# *In Development*
+
+### Environmental Impact
+
+# *In Development*
+
+
+```
+
+# Appendix
+
+The following graph is a representation of the range of annual flood days to be expected at each risk level. 
+```{r, echo=F}
+ggplot(
+  riskMatrix,
+  aes(
+    x = as.factor(Risk),
+    ymin = days.min,
+    lower = days.Q1,
+    middle = days.med,
+    upper = days.Q3,
+    ymax = days.max
+  )
+) +
+  geom_boxplot(stat = "identity")+
+  theme_minimal()+
+  labs(
+    x="Risk",
+    y="Annual Days Flooded"
+  )
+```
+
+
+```{r, echo=FALSE}
+knitr::kable(
+  riskInfo,
+  caption = "The following table is a copy of the risk interpretation in terms of days flooded and frequency of pothole extents that flood.",
+  col.names = c(
+    "Risk Level",
+    "60% of the pothole floods ___ % of years",
+    "30% of the pothole floods ___ % of years",
+    "Expected annual number of days with standing water",
+    "Representative Conditions"
+  ),
+  align = 'lllll',
+  width = 60
+) %>%
+  kable_styling()
+```
+
