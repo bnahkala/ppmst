@@ -4,7 +4,7 @@ The Prairie Pothole Management Support Tool (PPMST) is an R Shiny App developed 
 
 The PPMST can be accessed at the following link:
 
-A copy of the manual: PPMST Manual v1
+A copy of the manual: [PPMST Manual v1](https://github.com/bnahkala/ppmst/blob/master/www/PPMST_Manual_v1.pdf)
 
 The PPMST provides users with a handful of functional features that may be further developed, including:
 
