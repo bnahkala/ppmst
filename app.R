@@ -327,7 +327,7 @@ ui <-
                      h3("Baseline Risk:"),
                      h1(textOutput("predictionDUP2"))), 
               column(7, 
-                     textOutput("risksum"))
+                     htmlOutput("risksum"))
             )
           ),
           # MANIPULATE ALTERNATIVES =====
@@ -862,8 +862,7 @@ server <- function(input, output, session) {
           version = "1.3.0",
           crs = "+init=epsg:4326",
           transparent = T,
-          info_format = "text/html", 
-          tiled=F
+          info_format = "text/html"
         ),
         attribution = "IA ORTHO GIS SERVER",
         group = "3-meter DEM", 
@@ -1047,68 +1046,76 @@ server <- function(input, output, session) {
   })
   
   # RENDER RISK SUMMARY =====
-  output$risksum <- renderText({
+  output$risksum <- renderUI({
     if (rf.sample.pred() >= 5) {
-      paste0(
-        "In current conditions, your pothole is considered high risk with regards to flooding. 
-        Additional drainage is the only action that will significantly reduce the risk of this pothole. 
-        If it has existing drainage, it is likely that the flood conditions of the pothole will not 
+      HTML(
+        paste(
+          "In current conditions, your pothole is considered high risk with regards to flooding.
+        Additional drainage is the only action that will significantly reduce the risk of this pothole.
+        If it has existing drainage, it is likely that the flood conditions of the pothole will not
         significantly improve with further infrastructure. ",
-        "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment.
-        Within the model, important variables include drainage, maximum flow path, tillage, and maximum watershed 
-        relief (estimated in this app using watershed slope). These variables tend to be used to find the largest 
-        differences in risk among different land use and pothole characteristics. 
-        High risk potholes tend to have large watershed to pothole area ratios. A high ratio means a 
-        lot of water is draining to this area compared to the storage space available. Furthermore, the 
-        model suggests steeper, shorter watersheds and deeper potholes tend to have a higher risk. Steep, 
-        short watersheds would reduce the tendency for precipitation to infiltrate during storm events. 
-        Compiled with a deeper pothole, where there is less area utilized to infiltrate or evaporate water, 
-        stormwater can become effectively “trapped” for longer periods of time. Finally, these deeper systems 
-        may be more connected to the water table, making it easier for the pothole to receive water both laterally 
-        through shallow groundwater connections and vertically through runoff. 
-        NOTE: None of the variables when considered alone can accurately predict the risk of a pothole. 
-        These are general trends observed from the data. ",
-        "The addition of drainage would still significantly reduce the flooding in this pothole, 
-        but other considerations may be appropriate based on the inherent characteristics of the pothole. "
+          "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment.
+        Within the model, important variables include drainage, maximum flow path, tillage, and maximum watershed
+        relief (estimated in this app using watershed slope). These variables tend to be used to find the largest
+        differences in risk among different land use and pothole characteristics.
+        High risk potholes tend to have large watershed to pothole area ratios. A high ratio means a
+        lot of water is draining to this area compared to the storage space available. Furthermore, the
+        model suggests steeper, shorter watersheds and deeper potholes tend to have a higher risk. Steep,
+        short watersheds would reduce the tendency for precipitation to infiltrate during storm events.
+        Compiled with a deeper pothole, where there is less area utilized to infiltrate or evaporate water,
+        stormwater can become effectively “trapped” for longer periods of time. Finally, these deeper systems
+        may be more connected to the water table, making it easier for the pothole to receive water both laterally
+        through shallow groundwater connections and vertically through runoff.",
+          "NOTE: None of the variables when considered alone can accurately predict the risk of a pothole.
+        These are general trends observed from the data. The addition of drainage would still significantly reduce the flooding in this pothole,
+        but other considerations may be appropriate based on the inherent characteristics of the pothole. ",
+          sep = '<br/>'
+        )
       )
     } else if (rf.sample.pred() >= 3) {
-      paste0(
-        "In current conditions, your pothole is considered medium risk with regards to flooding. 
-        Additional drainage may moderately improve flood conditions. Pothole retirement and conservation 
-        tillage practices may remain the only options to reduce the magnitude of flooding.", 
-        "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment. 
-        Within the model, important variables include drainage, maximum flow path, tillage, and maximum watershed 
-        relief (estimated in this app using watershed slope). These variables tend to be used to find the largest 
+      HTML(
+        paste(
+          "In current conditions, your pothole is considered medium risk with regards to flooding.
+        Additional drainage may moderately improve flood conditions. Pothole retirement and conservation
+        tillage practices may remain the only options to reduce the magnitude of flooding.",
+          "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment.
+        Within the model, important variables include drainage, maximum flow path, tillage, and maximum watershed
+        relief (estimated in this app using watershed slope). These variables tend to be used to find the largest
         differences in risk among different land use and pothole characteristics.
-        Medium risk potholes are best described relative to high and low risk scenarios. High risk potholes have 
-        larger watershed area to pothole area ratios and frequently do not have added drainage. They may have 
-        tillage practices that reflect improved soil infiltration capacity, but this provides minimal benefits 
-        when looking at overall risk. Medium risk potholes likely have moderate watershed areas and moderate watershed 
-        slopes and pothole depths. They are moderately drained, likely only with subsurface drain lines. 
-        NOTE: None of the variables when considered alone can accurately predict the risk of a pothole. 
-        These are general trends observed from the data.", 
-        "A medium risk pothole may benefit from additional drainage, tillage or land retirement practices."
+        Medium risk potholes are best described relative to high and low risk scenarios. High risk potholes have
+        larger watershed area to pothole area ratios and frequently do not have added drainage. They may have
+        tillage practices that reflect improved soil infiltration capacity, but this provides minimal benefits
+        when looking at overall risk. Medium risk potholes likely have moderate watershed areas and moderate watershed
+        slopes and pothole depths. They are moderately drained, likely only with subsurface drain lines.",
+        "NOTE: None of the variables when considered alone can accurately predict the risk of a pothole.
+        These are general trends observed from the data. A medium risk pothole may benefit from additional drainage,
+        tillage or land retirement practices.",
+          sep = '<br/>'
+        )
       )
     } else {
-      paste0(
-        "In current conditions, your pothole is considered low risk with regards to flooding. 
-        Most management and drainage actions will not significantly change flood risk or change 
-        the impact of flooding on crop survival.", 
-        "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment. 
-        Within the model, important variables include drainage, maximum flow path, tillage, and maximum watershed 
-        relief (estimated in this app using watershed slope). These variables tend to be used to find the largest 
+      HTML(
+        paste(
+          "In current conditions, your pothole is considered low risk with regards to flooding.
+        Most management and drainage actions will not significantly change flood risk or change
+        the impact of flooding on crop survival.",
+          "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment.
+        Within the model, important variables include drainage, maximum flow path, tillage, and maximum watershed
+        relief (estimated in this app using watershed slope). These variables tend to be used to find the largest
         differences in risk among different land use and pothole characteristics.
-        Low risk potholes tend to have longer watersheds, which provides time for precipitation to infiltrate 
-        as it makes it way to the pothole via runoff. Other factors that suggest this pothole is low risk would 
-        be the low watershed area to pothole area ratio. This ratio implies that not a lot of water runs to the 
-        pothole compared to the surface area, and related, the volume of water it can store. However, risk is highly 
-        dependent on management activities as well. It is likely that this pothole is heavily drained, or is in a 
-        watershed with a high percentage of perennial vegetation (such as pasture). If conditions in this pothole 
-        consistently cause crop failure, it is likely there is an issue with plugged or mislaid tile lines or inlets.  
-        NOTE: None of the variables when considered alone can accurately predict the risk of a pothole. 
-        These are general trends observed from the data.", 
-        "A low risk pothole is unlikely to become any less risky based on changes to drainage, tillage or land retirement 
-        practices without taking significant land out of production. "
+        Low risk potholes tend to have longer watersheds, which provides time for precipitation to infiltrate
+        as it makes it way to the pothole via runoff. Other factors that suggest this pothole is low risk would
+        be the low watershed area to pothole area ratio. This ratio implies that not a lot of water runs to the
+        pothole compared to the surface area, and related, the volume of water it can store. However, risk is highly
+        dependent on management activities as well. It is likely that this pothole is heavily drained, or is in a
+        watershed with a high percentage of perennial vegetation (such as pasture). If conditions in this pothole
+        consistently cause crop failure, it is likely there is an issue with plugged or mislaid tile lines or inlets.", 
+        "NOTE: None of the variables when considered alone can accurately predict the risk of a pothole.
+        These are general trends observed from the data. A low risk pothole is unlikely to become any
+        less risky based on changes to drainage, tillage or land retirement
+        practices without taking significant land out of production. ",
+          sep = '<br/>'
+        )
       )
     }
   })
