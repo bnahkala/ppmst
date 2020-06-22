@@ -2,7 +2,7 @@
 
 The Prairie Pothole Management Support Tool (PPMST) is an R Shiny App developed for use by landowners focused in the Des Moines Lobe of Iowa who are interested in evaluating prairie potholes in land that they own or rent. The tool provides a quantitative basis for evaluating the flood risk of individual prairie potholes based on parameters inherent to the pothole or the farming system in which it resides. The risk model is grounded in a regressional random forest machine learning model that was trained using a dataset of watershed modeling simulation output. These watershed models of individual prairie potholes were calibrated and modified based on daily growing season water levels in multiple potholes within Story County, Iowa. 
 
-The PPMST can be accessed at the following link:
+The PPMST can be accessed at the following link: [Prairie Pothole Management Support Tool]( https://bnahkala.shinyapps.io/ppmst/)
 
 A copy of the manual: [PPMST Manual v1](https://github.com/bnahkala/ppmst/blob/master/www/PPMST_Manual_v1.pdf)
 
