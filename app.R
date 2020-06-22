@@ -1,5 +1,5 @@
 # AUTHOR: BRADY NAHKALA
-# LAST REVISED: 16 June 2020
+# LAST REVISED: 22 June 2020
 # LICENSE =====
 
 # Copyright (C)
@@ -49,10 +49,10 @@ library(grid)
 
 # STATIC DATA/FUNCTIONS =====
 source("input_dfs.R")
-source("rf_app.R")
+source("rF_app.R")
 # source("rf_tree.R") - CURRENT TREE IS FROM OUTDATED RF MODEL
 
-counties <- raster::shapefile("C:/POTHOLES/R/shiny app test/shp/county.shp")
+counties <- raster::shapefile("./shp/county.shp")
 counties <- spTransform(counties, "+init=epsg:4326")
 
 # user interface ===============================
@@ -321,7 +321,7 @@ ui <-
               height = NULL,
               width = 12, 
               column(3,
-                     imageOutput("riskicon", width="100%", height = "200px")
+                     uiOutput("riskicon", width="100%", height = "200px")
                      ),
               column(2, 
                      h3("Baseline Risk:"),
@@ -905,24 +905,30 @@ server <- function(input, output, session) {
   })
   
   # IMAGE OF POTHOLE ====
-  output$riskicon <- renderImage({
+  output$riskicon <- renderUI({
     if (rf.sample.pred() >= 5) {
-      list(
-        src="./www/high.png", 
-        style="display: block; margin-left: auto; margin-right: auto; width:100%"
-          )
+      
+        tags$img(
+          src="high.PNG", 
+          style="display: block; margin-left: auto; margin-right: auto; width:100%"
+        )
+      
     } else if (rf.sample.pred() >= 3) {
-      list(
-        src="./www/med.png", 
-        style="display: block; margin-left: auto; margin-right: auto; width:100%"
-      )
+      
+        tags$img(
+          src="med.PNG",
+          style="display: block; margin-left: auto; margin-right: auto; width:100%"
+        )
+      
     } else {
-      list(
-        src="./www/low.png", 
-        style="display: block; margin-left: auto; margin-right: auto; width:100%"
-      )
+     
+        tags$img(
+          src="low.PNG", 
+          style="display: block; margin-left: auto; margin-right: auto; width:100%"
+        )
+      
     }
-  }, deleteFile = F)
+  })
   
   # RENDER EXAMPLE TABLE -output$rFInfo- IN TECHNICAL ABOUT THE TOOL SECTION =====
   
@@ -977,72 +983,70 @@ server <- function(input, output, session) {
       step = 0.1
     )
     
-  })
-  
-  # DEFAULTS POP-UP ====
-  observeEvent(input$SaveDefaults, {
-      if (rf.sample.pred() >= 5) {
-        # HIGH RISK WARNING =====
-        showModal(
-          modalDialog(
-            title = "Warning Message", 
-            tags$div(
-              strong("Baseline Pothole Risk: "), 
-              strong(rf.sample.pred(), style = "color:red"), 
-              "out of 10.",
-              br(),
-              br(),
-              "In current conditions, your pothole is considered high risk with regards to flooding. 
+    # DEFAULTS POP-UP ====
+    if (rf.sample.pred() >= 5) {
+      # HIGH RISK WARNING =====
+      showModal(
+        modalDialog(
+          title = "Warning Message", 
+          tags$div(
+            strong("Baseline Pothole Risk: "), 
+            strong(rf.sample.pred(), style = "color:red"), 
+            "out of 10.",
+            br(),
+            br(),
+            "In current conditions, your pothole is considered high risk with regards to flooding. 
               Additional drainage or significant land retirement would likely reduce the risk of this pothole. 
               If it has existing drainage, it is likely that the flood conditions of the pothole will not significantly 
               improve with further infrastructure. ",
-              br(), br(), 
-              "Continue to the 'Analysis' tab."
-            ),
-            easyClose = T
-          )
+            br(), br(), 
+            "Continue to the 'Analysis' tab."
+          ),
+          easyClose = T
         )
-      } else if (rf.sample.pred() >= 3) {
-        # MEDIUM RISK WARNING =====
-        showModal(
-          modalDialog(
-            title = "Warning Message", 
-            tags$div(
-              strong("Baseline Pothole Risk: "), 
-              strong(rf.sample.pred(), style = "color:orange"), 
-              "out of 10.",
-              br(),
-              br(),
-              "In current conditions, your pothole is considered medium risk with regards to flooding. 
+      )
+    } else if (rf.sample.pred() >= 3) {
+      # MEDIUM RISK WARNING =====
+      showModal(
+        modalDialog(
+          title = "Warning Message", 
+          tags$div(
+            strong("Baseline Pothole Risk: "), 
+            strong(rf.sample.pred(), style = "color:orange"), 
+            "out of 10.",
+            br(),
+            br(),
+            "In current conditions, your pothole is considered medium risk with regards to flooding. 
               Additional drainage may moderately improve flood conditions. Pothole retirement and conservation 
               tillage practices may be the only options available to reduce the overall risk of the pothole.",
-              br(), br(), 
-              "Continue to the 'Analysis' tab."
-            ),
-            easyClose = T
-          )
+            br(), br(), 
+            "Continue to the 'Analysis' tab."
+          ),
+          easyClose = T
         )
-      } else {
-        # LOW RISK WARNING =====
-        showModal(
-          modalDialog(
-            title = "Informational Message", 
-            tags$div(
-              strong("Baseline Pothole Risk: "), 
-              strong(rf.sample.pred(), style = "color:green"), 
-              "out of 10.",
-              br(),
-              br(),
-              "In current conditions, your pothole is considered low risk with regards to flooding. 
+      )
+    } else {
+      # LOW RISK WARNING =====
+      showModal(
+        modalDialog(
+          title = "Informational Message", 
+          tags$div(
+            strong("Baseline Pothole Risk: "), 
+            strong(rf.sample.pred(), style = "color:green"), 
+            "out of 10.",
+            br(),
+            br(),
+            "In current conditions, your pothole is considered low risk with regards to flooding. 
               Most management and drainage actions will not significantly change flood risk or change 
               the impact of flooding on crop survival, based on the range of flooding observed in modeling studies.",
-              br(), br(), 
-              "Continue to the 'Analysis' tab."
-            ),
-            easyClose = T
-          )
+            br(), br(), 
+            "Continue to the 'Analysis' tab."
+          ),
+          easyClose = T
         )
-      }
+      )
+    }
+    
   })
   
   # RENDER RISK SUMMARY =====
@@ -1051,7 +1055,7 @@ server <- function(input, output, session) {
       HTML(
         paste(
           "In current conditions, your pothole is considered high risk with regards to flooding.
-        Additional drainage is the only action that will significantly reduce the risk of this pothole.
+        Additional drainage or full field retirement are the only actions that will significantly reduce the risk of this pothole.
         If it has existing drainage, it is likely that the flood conditions of the pothole will not
         significantly improve with further infrastructure. ",
           "A variety of factors may contribute to this ranking, as you have seen in the baseline assessment.
@@ -1109,7 +1113,9 @@ server <- function(input, output, session) {
         pothole compared to the surface area, and related, the volume of water it can store. However, risk is highly
         dependent on management activities as well. It is likely that this pothole is heavily drained, or is in a
         watershed with a high percentage of perennial vegetation (such as pasture). If conditions in this pothole
-        consistently cause crop failure, it is likely there is an issue with plugged or mislaid tile lines or inlets.", 
+        consistently cause crop failure, there could be issues with plugged or mislaid tile lines or inlets. There 
+          is supplementary data lower on this page where you can view what might be expected of low risk potholes, 
+          to compare the flood behavior of your pothole.", 
         "NOTE: None of the variables when considered alone can accurately predict the risk of a pothole.
         These are general trends observed from the data. A low risk pothole is unlikely to become any
         less risky based on changes to drainage, tillage or land retirement
@@ -1159,22 +1165,6 @@ server <- function(input, output, session) {
   
   # PREDICT RISK OF FLOODING in -rf.sample.pred()-, -.min, .max- and -output$prediction- =============
   rf.sample.pred <- reactive({
-    if (input$pred.model == "Representative Decision Tree") {
-      # classify_pothole(
-      #   as.character(input$Drainage),
-      #   as.character(input$Tillage),
-      #   as.character(input$lulc.pothole),
-      #   as.character(input$lulc.field),
-      #   as.numeric(
-      #     round(input$h2oshed_estimate1 / input$area_estimate1, digits = 1)
-      #   ),
-      #   as.numeric(input$max.depth1),
-      #   as.numeric(max.relief1()),
-      #   as.numeric(max.flow.path1())
-      # )
-    } else {
-      
-      # IMPLEMENT THE RANDOM FOREST MODEL
       randForest.app(
         as.character(input$Drainage),
         as.character(input$Tillage),
@@ -1187,8 +1177,6 @@ server <- function(input, output, session) {
         as.numeric(max.flow.path1()),
         as.numeric(input$max.depth1)
       )
-    }
-    
   })
   
   rf.sample.pred.min <- reactive({
@@ -1333,22 +1321,6 @@ server <- function(input, output, session) {
   
     # ALT 1 -rf.alternative.pred1()- with -.min,. .max- ====
   rf.alternative.pred1 <- reactive({
-    
-    
-    if (input$pred.model == "Representative Decision Tree") {
-      
-      # classify_pothole(
-      #   as.character(input$Drainage1),
-      #   as.character(input$Tillage1),
-      #   as.character(input$lulc.pothole1),
-      #   as.character(input$lulc.field1),
-      #   as.numeric(round(input$h2oshed_estimate1 / input$area_estimate1, digits=1)),
-      #   as.numeric(input$max.depth1),
-      #   as.numeric(max.relief1()),
-      #   as.numeric(max.flow.path1())
-      # )
-    } else {
-     
       randForest.app(
         as.character(input$Drainage1),
         as.character(input$Tillage1),
@@ -1361,7 +1333,6 @@ server <- function(input, output, session) {
         as.numeric(max.flow.path1()),
         as.numeric(input$max.depth1)
       )
-    }
   })
   
   rf.alt1.pred.min <- reactive({
@@ -1378,20 +1349,6 @@ server <- function(input, output, session) {
 
     # ALT 2 -rf.alternative.pred2()- with -.min,. .max- ====
   rf.alternative.pred2 <- reactive({
-    if (input$pred.model == "Representative Decision Tree") {
-      
-      # classify_pothole(
-      #   as.character(input$Drainage2),
-      #   as.character(input$Tillage2),
-      #   as.character(input$lulc.pothole2),
-      #   as.character(input$lulc.field2),
-      #   as.numeric(round(input$h2oshed_estimate1 / input$area_estimate1, digits=1)),
-      #   as.numeric(input$max.depth1),
-      #   as.numeric(max.relief1()),
-      #   as.numeric(max.flow.path1())
-      # )
-    } else {
-      
       randForest.app(
         as.character(input$Drainage2),
         as.character(input$Tillage2),
@@ -1404,7 +1361,6 @@ server <- function(input, output, session) {
         as.numeric(max.flow.path1()),
         as.numeric(input$max.depth1)
       )
-    }
   })
   
   rf.alt2.pred.min <- reactive({
@@ -1421,20 +1377,6 @@ server <- function(input, output, session) {
   
     # ALT 3 -rf.alternative.pred3()- with -.min,. .max- ====
   rf.alternative.pred3 <- reactive({
-    if (input$pred.model == "Representative Decision Tree") {
-      
-      # classify_pothole(
-      #   as.character(input$Drainage3),
-      #   as.character(input$Tillage3),
-      #   as.character(input$lulc.pothole3),
-      #   as.character(input$lulc.field3),
-      #   as.numeric(round(input$h2oshed_estimate1 / input$area_estimate1, digits=1)),
-      #   as.numeric(input$max.depth1),
-      #   as.numeric(max.relief1()),
-      #   as.numeric(max.flow.path1())
-      # )
-    } else {
-      
       randForest.app(
         as.character(input$Drainage3),
         as.character(input$Tillage3),
@@ -1447,7 +1389,6 @@ server <- function(input, output, session) {
         as.numeric(max.flow.path1()),
         as.numeric(input$max.depth1)
       )
-    }
   })
   
   rf.alt3.pred.min <- reactive({
@@ -1464,20 +1405,6 @@ server <- function(input, output, session) {
   
     # ALT 4 -rf.alternative.pred4()- with -.min,. .max- ====
   rf.alternative.pred4 <- reactive({
-    if (input$pred.model == "Representative Decision Tree") {
-      
-      # classify_pothole(
-      #   as.character(input$Drainage4),
-      #   as.character(input$Tillage4),
-      #   as.character(input$lulc.pothole4),
-      #   as.character(input$lulc.field4),
-      #   as.numeric(round(input$h2oshed_estimate1 / input$area_estimate1, digits=1)),
-      #   as.numeric(input$max.depth1),
-      #   as.numeric(max.relief1()),
-      #   as.numeric(max.flow.path1())
-      # )
-    } else {
-      
       randForest.app(
         as.character(input$Drainage4),
         as.character(input$Tillage4),
@@ -1490,7 +1417,6 @@ server <- function(input, output, session) {
         as.numeric(max.flow.path1()),
         as.numeric(input$max.depth1)
       )
-    }
   })
   
   rf.alt4.pred.min <- reactive({
@@ -1555,22 +1481,22 @@ server <- function(input, output, session) {
   })
   
   # RENDER SUMMARY BOXPLOTS -output$daysXX- IN ALTERNATIVES =====
-  baserow <- reactive({
-    as.numeric(findInterval(rf.sample.pred(), riskMatrix$Risk))
-  })
-  
-  altrow1 <- reactive({
-    as.numeric(findInterval(rf.alternative.pred1(), riskMatrix$Risk))
-  })
-  altrow2 <- reactive({
-    as.numeric(findInterval(rf.alternative.pred2(), riskMatrix$Risk))
-  })
-  altrow3 <- reactive({
-    as.numeric(findInterval(rf.alternative.pred3(), riskMatrix$Risk))
-  })
-  altrow4 <- reactive({
-    as.numeric(findInterval(rf.alternative.pred4(), riskMatrix$Risk))
-  })
+  # baserow <- reactive({
+  #   as.numeric(findInterval(rf.sample.pred(), riskMatrix$Risk))
+  # })
+  # 
+  # altrow1 <- reactive({
+  #   as.numeric(findInterval(rf.alternative.pred1(), riskMatrix$Risk))
+  # })
+  # altrow2 <- reactive({
+  #   as.numeric(findInterval(rf.alternative.pred2(), riskMatrix$Risk))
+  # })
+  # altrow3 <- reactive({
+  #   as.numeric(findInterval(rf.alternative.pred3(), riskMatrix$Risk))
+  # })
+  # altrow4 <- reactive({
+  #   as.numeric(findInterval(rf.alternative.pred4(), riskMatrix$Risk))
+  # })
   
   # EXAMPLE BOXPLOT. TO REPLICATE, CHANGE ALTROW() AND OUTPUT OBJECT INTEGER
   # output$days1 <- renderPlot({
