@@ -192,7 +192,7 @@ ui <-
                     style = "height:800px; background-color white;",
                     leafletOutput(outputId = "mymap", height = 800),
                     # POTENTIAL FUNCTIONALITY TO SCREENSHOT THE MAP AND SAVE TO REPORT ====
-                    actionButton(inputId = "MapView", label = "Save Map View")
+                    downloadButton(outputId = "MapView", label = "Save Map View")
                     # ====
                   )
                   )
@@ -905,6 +905,39 @@ server <- function(input, output, session) {
   output$mymap <- renderLeaflet({
     map_reactive()
   })
+  
+  # store the current user-created version
+  # of the Leaflet map for download in 
+  # a reactive expression
+  user.created.map <- reactive({
+    
+    # call the foundational Leaflet map
+    map_reactive() %>%
+      
+      # store the view based on UI
+      setView( lng = input$map_center$lng
+               ,  lat = input$map_center$lat
+               , zoom = input$map_zoom
+      )
+    
+  }) # end of creating user.created.map()
+  
+  # MAPSHOT ====
+  output$MapView <- downloadHandler(
+    filename = paste0("map"
+                       , ".pdf"
+    )
+    
+    , content = function(file) {
+      mapshot( x = user.created.map()
+               , file = file
+               , cliprect = "viewport" # the clipping rectangle matches the height & width from the viewing port
+               , selfcontained = FALSE # when this was not specified, the function for produced a PDF of two pages: one of the leaflet map, the other a blank page.
+      )
+    } # end of content() function
+  )
+    
+  
   
   # IMAGE OF POTHOLE ====
   output$riskicon <- renderUI({
