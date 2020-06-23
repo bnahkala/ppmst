@@ -39,7 +39,7 @@ library(rgdal)
 library(sp)
 library(XML)
 # library(webshot)
-# library(htmlwidgets)
+library(htmlwidgets)
 
 # utility
 library(dplyr)
@@ -844,7 +844,7 @@ server <- function(input, output, session) {
       ) %>%
       # IA ORTHO SERVER ADDITIONS ====
     leaflet.extras2::addWMS(
-      "https://athene.gis.iastate.edu/arcgis/services/ortho/naip_2010_nc/ImageServer/WMSServer",
+      "https://ortho.gis.iastate.edu/arcgis/services/ortho/naip_2010_nc/ImageServer/WMSServer",
       layers = "naip_2010_nc",
       options = WMSTileOptions(
         format = "image/png",
@@ -855,14 +855,16 @@ server <- function(input, output, session) {
       group = "NAIP 2010"
     ) %>%
       leaflet.extras2::addWMS(
-        "https://athene.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer",
+        "https://ortho.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer?request=GetCapabilities&service",
+        # "https://athene.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer",
         layers = "lidar_dem_3m",
         options = WMSTileOptions(
           format = "image/png",
           version = "1.3.0",
           crs = "+init=epsg:4326",
           transparent = T,
-          info_format = "text/html"
+          info_format = "text/xml",
+          tiled=F
         ),
         attribution = "IA ORTHO GIS SERVER",
         group = "3-meter DEM", 
