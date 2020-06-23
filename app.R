@@ -192,7 +192,7 @@ ui <-
                     style = "height:800px; background-color white;",
                     leafletOutput(outputId = "mymap", height = 800),
                     # POTENTIAL FUNCTIONALITY TO SCREENSHOT THE MAP AND SAVE TO REPORT ====
-                    # actionButton(inputId = "MapView", label = "Save Map View")
+                    actionButton(inputId = "MapView", label = "Save Map View")
                     # ====
                   )
                   )
