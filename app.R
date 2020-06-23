@@ -1205,58 +1205,6 @@ server <- function(input, output, session) {
   
   # MAINTAIN LOGIC DURING VARIABLE INPUT =====
   observe({
-    if (input$lulc.field == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.pothole",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage",
-        selected = "NA-Retired",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      updateRadioButtons(
-        session,
-        "lulc.field",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      
-    } else {
-    }
-    
-    if (input$lulc.pothole == "Corn-Soybean Rotation" & input$lulc.field == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.field",
-        selected = "Corn-Soybean Rotation",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage",
-        selected = "Conventional",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      
-    } else {
-    }
-    
-  })
-  
-  observe({
     if (max.relief1() < input$max.depth1) {
       showModal(
         modalDialog(
@@ -1523,202 +1471,60 @@ server <- function(input, output, session) {
 
   # MAINTAIN LOGIC DURING ALTERNATIVE ASSESSMENT INPUTS (CONTINUITY) =====
   observe({
-    if (input$lulc.field1 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.pothole1",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
+    if (input$lulc.field == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$lulc.pothole == "Corn-Soybean Rotation" |
+        input$lulc.field1 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$lulc.pothole1 == "Corn-Soybean Rotation" | 
+        input$lulc.field2 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$lulc.pothole2 == "Corn-Soybean Rotation" | 
+        input$lulc.field3 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$lulc.pothole3 == "Corn-Soybean Rotation" | 
+        input$lulc.field4 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$lulc.pothole4 == "Corn-Soybean Rotation") {
+      
+      showModal(
+        modalDialog(
+          title = "Warning Message", 
+          tags$div(
+            "If the field is in perennial cover, it is likely the pothole is in perennial cover. Please change one of the inputs. "
+          ),
+          easyClose = T
         )
       )
-      updateSelectInput(
-        session,
-        "Tillage1",
-        selected = "NA-Retired",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      updateRadioButtons(
-        session,
-        "lulc.field1",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
+    } else {}
+  })
+  
+  observe({
+    if ((input$lulc.field == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$Tillage != "NA-Retired") |
+        (input$lulc.field1 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$Tillage1 != "NA-Retired") | 
+        (input$lulc.field2 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$Tillage2 != "NA-Retired") | 
+        (input$lulc.field3 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$Tillage3 != "NA-Retired") | 
+        (input$lulc.field4 == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$Tillage4 != "NA-Retired")) {
+      
+      showModal(
+        modalDialog(
+          title = "Warning Message", 
+          tags$div(
+            "If the field is in perennial cover, make sure the NA is checked for tillage."
+          ),
+          easyClose = T
         )
       )
       
-    } else {
-    }
-    
-    if (input$lulc.pothole1 == "Corn-Soybean Rotation" & input$lulc.field1 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.field1",
-        selected = "Corn-Soybean Rotation",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage1",
-        selected = "Conventional",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
+    } else if ((input$lulc.field == "Corn-Soybean Rotation" & input$Tillage == "NA-Retired") |
+               (input$lulc.field1 == "Corn-Soybean Rotation" & input$Tillage1 == "NA-Retired") | 
+               (input$lulc.field2 == "Corn-Soybean Rotation" & input$Tillage2 == "NA-Retired") | 
+               (input$lulc.field3 == "Corn-Soybean Rotation" & input$Tillage3 == "NA-Retired") | 
+               (input$lulc.field4 == "Corn-Soybean Rotation" & input$Tillage4 == "NA-Retired")) {
       
-    } else {
-    }
-    
-    if (input$lulc.field2 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.pothole2",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
+      showModal(
+        modalDialog(
+          title = "Warning Message", 
+          tags$div(
+            "If the field is actively farmed, ensure you selected the correct tillage practice in the field."
+          ),
+          easyClose = T
         )
       )
-      updateSelectInput(
-        session,
-        "Tillage2",
-        selected = "NA-Retired",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      updateRadioButtons(
-        session,
-        "lulc.field2",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      
-    } else {
-    }
-    
-    if (input$lulc.pothole2 == "Corn-Soybean Rotation" & input$lulc.field2 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.field2",
-        selected = "Corn-Soybean Rotation",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage2",
-        selected = "Conventional",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      
-    } else {
-    }
-    
-    if (input$lulc.field3 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.pothole3",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage3",
-        selected = "NA-Retired",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      updateRadioButtons(
-        session,
-        "lulc.field3",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      
-    } else {
-    }
-    
-    if (input$lulc.pothole3 == "Corn-Soybean Rotation"& input$lulc.field3 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.field3",
-        selected = "Corn-Soybean Rotation",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage3",
-        selected = "Conventional",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      
-    } else {
-    }
-    
-    if (input$lulc.field4 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.pothole4",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage4",
-        selected = "NA-Retired",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      updateRadioButtons(
-        session,
-        "lulc.field4",
-        selected = "Perennial Cover (Conservation Reserve, Grassed, etc.)",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      
-    } else {
-    }
-    
-    if (input$lulc.pothole4 == "Corn-Soybean Rotation" & input$lulc.field4 == "Perennial Cover (Conservation Reserve, Grassed, etc.)") {
-      updateRadioButtons(
-        session,
-        "lulc.field4",
-        selected = "Corn-Soybean Rotation",
-        choices = list(
-          "Corn-Soybean Rotation",
-          "Perennial Cover (Conservation Reserve, Grassed, etc.)"
-        )
-      )
-      updateSelectInput(
-        session,
-        "Tillage4",
-        selected = "Conventional",
-        choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-      )
-      
-    } else {
     }
   })
+  
+ 
   # DATA FRAME OF ALL CURRENT INPUTS/PREDICTIONS -react.df()- and -react.pred.df()- =====
   react.df <- reactive({
     data.frame(
