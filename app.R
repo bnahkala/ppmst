@@ -90,14 +90,6 @@ ui <-
           fluidRow(
             sidebarLayout(
               sidebarPanel(
-                radioButtons(
-                  inputId = "pred.model",
-                  label = "Prediction Model",
-                  choices = list(
-                    # "Representative Decision Tree",
-                    "Random Forest Ensemble"
-                  )
-                ),
                 textInput(
                   inputId = "cnty",
                   label = "1. Enter your County",
