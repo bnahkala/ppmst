@@ -532,15 +532,19 @@ ui <-
                     inputId = "Tillage4",
                     label = "Specify current tillage",
                     choices = list("Conventional", "Conservation", "No Till", "NA-Retired")
-                  )
+                  ), 
+                  # DOWNLOAD ====
+                  div(id="rptlbl",
+                    textInput(
+                    inputId = "rptname",
+                    label = "File name:",
+                    value = "--Enter a name for your analysis report--"
+                  ),
+                  tags$style(type="text/css", "#rptlbl {color: red}")
+                  ),
+                  downloadButton("Report", label = "Save Report", style = "float:right")
                 )
-              ),
-              
-              # EXECUTE ANALYSIS
-              fluidRow(column(
-                width = 12,
-                downloadButton("Report", label = "Save Report", style = "float:right")
-              ))
+              )
             )
           ),
           # DATA SUPPORTING THE RISK LEVEL =====
@@ -1612,7 +1616,9 @@ server <- function(input, output, session) {
   # GENERATE ALT ANALYSIS REPORT -output$Report- =====
   # download handler taken from external source and adapted
   output$Report <- downloadHandler(
-    filename = "report.html",
+    filename = function () {
+      paste0(input$rptname, ".html")
+    },
     # or "report.pdf, but I (BAN) am having trouble
     # with the pdf generator functions (pdflatex, miktex)"
     content = function(file) {
