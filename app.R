@@ -264,41 +264,7 @@ ui <-
               width = 12,
               column(
                 width = 12,
-                sliderInput(
-                  "area_estimate1",
-                  "Decimal:",
-                  label = "Estimate the maximum land extent of the pothole (ha)",
-                  value = 3.2,
-                  min = 0,
-                  max = 25,
-                  step = 0.1
-                ),
-                sliderInput(
-                  "h2oshed_estimate1",
-                  "Decimal:",
-                  label = "Estimate the contributing flow area to the pothole (ha)",
-                  value = 20,
-                  min = 1,
-                  max = 500,
-                  step = 0.1
-                ),
-                sliderInput(
-                  "max.depth1",
-                  "Decimal:",
-                  label = "Estimate the maximum flooding depth of the pothole (m)",
-                  value = 1.6,
-                  min = 0,
-                  max = 15,
-                  step = 0.1
-                ),
-                sliderInput(
-                  "watershed.slope1",
-                  "Estimate the watershed slope as a percent (approximate with field slope if necessary).",
-                  value = 1.0,
-                  min = 0,
-                  max = 15,
-                  step = 0.1
-                )
+                tableOutput("basepothole")
               )
             )
           ),
@@ -879,61 +845,7 @@ server <- function(input, output, session) {
                 src="PPMST_Manual_v1.pdf")
   })
   
-  # CONVERSIONS FROM INPUTS =====
-  
-  area_estimate_ha <- reactive({
-    input$area_estimate / 2.47
-  })
-
-  h2oshed_estimate_ha <- reactive({
-    input$h2oshed_estimate / 2.47
-  })
-
-  max.depth_m <- reactive({
-    input$max.depth / 3.28
-  })
-  
-  # SAVE POTHOLE DEFAULTS -input$SaveDefaults- =================
-  observeEvent(input$SaveDefaults, {
-    val1 <- input$area_estimate
-    val2 <- input$h2oshed_estimate
-    val3 <- input$max.depth
-    val4 <- input$watershed.slope
-    
-    updateSliderInput(
-      session,
-      inputId = "area_estimate1",
-      val = val1,
-      min = 0,
-      max = 25,
-      step = 0.1
-    )
-    updateSliderInput(
-      session,
-      inputId = "h2oshed_estimate1",
-      val = val2,
-      min = 1,
-      max = 500,
-      step = 0.1
-    )
-    updateSliderInput(
-      session,
-      inputId = "max.depth1",
-      val = val3,
-      min = 0,
-      max = 15,
-      step = 0.1
-    )
-    updateSliderInput(
-      session,
-      inputId = "watershed.slope1",
-      val = val4,
-      min = 0,
-      max = 15,
-      step = 0.1
-    )
-  })
-  
+  # SUMMARY POPUP ON SAVE BASELINE CLICK ====
   observeEvent(input$SaveDefaults, {
     delay(1000) 
           
@@ -997,20 +909,6 @@ server <- function(input, output, session) {
         easyClose = T
       ))
     }
-  })
-  
-  # CONVERSIONS FROM INPUTS/Analysis Page =====
-  
-  area_estimate_ha1 <- reactive({
-    input$area_estimate1 / 2.47
-  })
-  
-  h2oshed_estimate_ha1 <- reactive({
-    input$h2oshed_estimate1 / 2.47
-  })
-  
-  max.depth_m1 <- reactive({
-    input$max.depth1 / 3.28
   })
   
   # RENDER RISK SUMMARY =====
@@ -1090,20 +988,43 @@ server <- function(input, output, session) {
     }
   })
   
+  # CONVERSIONS FROM INPUTS =====
+  
+  area_estimate_ha <- reactive({
+    input$area_estimate / 2.47
+  })
+  
+  h2oshed_estimate_ha <- reactive({
+    input$h2oshed_estimate / 2.47
+  })
+  
+  max.depth_m <- reactive({
+    input$max.depth / 3.28
+  })
+  
   # REACT AND CALCULATE WATERSHED PARAMS FROM -input$watershed.slope- =====
   max.flow.path <- reactive({
     if (input$field.position == "Circular") {
       # circular
-      round((2*sqrt((h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
+      round((2*sqrt((h2oshed_estimate_ha()*10000) / 3.1415)) - (sqrt((area_estimate_ha()*10000) / 3.1415)), 0)
     } else {
       # ellipsoidal
-      round((2*sqrt((2*h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
+      round((2*sqrt((2*h2oshed_estimate_ha()*10000) / 3.1415)) - (sqrt((area_estimate_ha()*10000) / 3.1415)), 0)
     }
   })
 
   max.relief <- reactive({
       max.flow.path() * input$watershed.slope / 100
   })
+  
+  max.flow.path_ft <- reactive({
+    round(max.flow.path() * 3.28, 0)
+  })
+  
+  max.relief_ft <- reactive({
+    round(max.relief() * 3.28, 1)
+  })
+  
   # REACT TO INPUT DATA, SAVE TO -sample.values.df()- =================
   sample.values.df <- reactive({
     data.frame(
@@ -1126,6 +1047,25 @@ server <- function(input, output, session) {
       stringsAsFactors = FALSE
     )
   })
+  
+  # RENDER BASELINE INPUTS AS TABLE -output$basepothole- ====
+  
+  output$basepothole <- renderTable({
+    data.frame(
+      "Parameter"=c(
+        "Pothole Area (ac)",
+        "Watershed Area (ac)",
+        "Maximum Depth (ft)",
+        "Slope (%)"
+      ), 
+      "Baseline"=c(
+        input$area_estimate,
+        input$h2oshed_estimate,
+        input$max.depth,
+        input$watershed.slope
+      )
+    )
+  }, digits = 1, width = "300px")
   
   # PREDICT RISK OF FLOODING in -rf.sample.pred()-, -.min, .max- and -output$prediction- =============
   rf.sample.pred <- reactive({
@@ -1169,7 +1109,7 @@ server <- function(input, output, session) {
   
   # MAINTAIN LOGIC DURING VARIABLE INPUT =====
   observe({
-    if (max.relief1() < max.depth_m1()) {
+    if (max.relief() < max.depth_m()) {
       showModal(
         modalDialog(
           title = "Error Message", 
@@ -1185,7 +1125,7 @@ server <- function(input, output, session) {
   })
   
   observe({
-    if (area_estimate_ha1() > h2oshed_estimate_ha1()) {
+    if (area_estimate_ha() > h2oshed_estimate_ha()) {
       showModal(
         modalDialog(
           title = "Error Message", 
@@ -1215,29 +1155,7 @@ server <- function(input, output, session) {
   output$lab4 <- renderText({
     paste0(input$AltID4, ":")
   })
-  # PREDICT RISK FOR ALL ALTERNATIVES =====
-  max.flow.path1 <- reactive({
-
-    if (input$field.position == "Circular") {
-      # circular watershed
-      round((2*sqrt((h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
-    } else {
-      # ellipsoidal
-      round((2*sqrt((2*h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
-    }
-  })
   
-  max.relief1 <- reactive({
-    max.flow.path1() * input$watershed.slope1 / 100
-  })
-  
-  max.flow.path_ft <- reactive({
-    round(max.flow.path1() * 3.28, 0)
-  })
-  
-  max.relief_ft <- reactive({
-    round(max.relief1() * 3.28, 1)
-  })
   
     # ALT 1 -rf.alternative.pred1()- with -.min,. .max- ====
   rf.alternative.pred1 <- reactive({
@@ -1247,11 +1165,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole1),
         as.character(input$lulc.field1),
         as.numeric(
-          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
+          round(h2oshed_estimate_ha() / area_estimate_ha(), digits = 1)
         ),
-        as.numeric(max.relief1()),
-        as.numeric(max.flow.path1()),
-        as.numeric(max.depth_m1())
+        as.numeric(max.relief()),
+        as.numeric(max.flow.path()),
+        as.numeric(max.depth_m())
       )
   })
   
@@ -1275,11 +1193,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole2),
         as.character(input$lulc.field2),
         as.numeric(
-          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
+          round(h2oshed_estimate_ha() / area_estimate_ha(), digits = 1)
         ),
-        as.numeric(max.relief1()),
-        as.numeric(max.flow.path1()),
-        as.numeric(max.depth_m1())
+        as.numeric(max.relief()),
+        as.numeric(max.flow.path()),
+        as.numeric(max.depth_m())
       )
   })
   
@@ -1303,11 +1221,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole3),
         as.character(input$lulc.field3),
         as.numeric(
-          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
+          round(h2oshed_estimate_ha() / area_estimate_ha(), digits = 1)
         ),
-        as.numeric(max.relief1()),
-        as.numeric(max.flow.path1()),
-        as.numeric(max.depth_m1())
+        as.numeric(max.relief()),
+        as.numeric(max.flow.path()),
+        as.numeric(max.depth_m())
       )
   })
   
@@ -1331,11 +1249,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole4),
         as.character(input$lulc.field4),
         as.numeric(
-          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
+          round(h2oshed_estimate_ha() / area_estimate_ha(), digits = 1)
         ),
-        as.numeric(max.relief1()),
-        as.numeric(max.flow.path1()),
-        as.numeric(max.depth_m1())
+        as.numeric(max.relief()),
+        as.numeric(max.flow.path()),
+        as.numeric(max.depth_m())
       )
   })
   
@@ -1513,9 +1431,9 @@ server <- function(input, output, session) {
       ),
       "CountyID" = c(rep(input$cnty, 5)),
       "FieldID" = c(rep(input$field)),
-      "Pothole Area" = c(rep(input$area_estimate1, 5)),
-      "Watershed Area" = c(rep(input$h2oshed_estimate1, 5)),
-      "Maximum Depth" = c(rep(input$max.depth1, 5)),
+      "Pothole Area" = c(rep(input$area_estimate, 5)),
+      "Watershed Area" = c(rep(input$h2oshed_estimate, 5)),
+      "Maximum Depth" = c(rep(input$max.depth, 5)),
       "Watershed Relief" = c(rep(max.relief_ft(), 5)),
       "Maximum Flow Path" = c(rep(max.flow.path_ft(), 5)),
       "LULC of Pothole" = c(
