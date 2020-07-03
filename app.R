@@ -346,29 +346,33 @@ ui <-
                        em(h3(textOutput("lab1"))),
                        em(h1(
                          textOutput("prediction1")
-                       ))#,
-                       # plotOutput("days1")
+                       )),
+                       br(),
+                       tableOutput("baseinputs1")
                        ),
                 column(2,
                        em(h3(textOutput("lab2"))),
                        em(h1(
                          textOutput("prediction2")
-                       ))#,
-                       # plotOutput("days2")
+                       )),
+                       br(),
+                       tableOutput("baseinputs2")
                        ),
                 column(2,
                        em(h3(textOutput("lab3"))),
                        em(h1(
                          textOutput("prediction3")
-                       ))#,
-                       # plotOutput("days3")
+                       )),
+                       br(),
+                       tableOutput("baseinputs3")
                        ),
                 column(2,
                        em(h3(textOutput("lab4"))),
                        em(h1(
                          textOutput("prediction4")
-                       ))#,
-                       # plotOutput("days4")
+                       )),
+                       br(),
+                       tableOutput("baseinputs4")
                        )
               )),
               div(
@@ -1365,7 +1369,7 @@ server <- function(input, output, session) {
     paste(rf.alt4.pred.min()," to ", rf.alt4.pred.max())
   })
   
-  # RENDER SUMMARY BARPLOT -output$barplot- AND INPUTS TABLE -output$baseinputs- IN ANALYSIS PAGE ====
+  # RENDER SUMMARY BARPLOT -output$barplot- =====
   
   output$barplot <- renderPlot({
     ggplot(react.pred.df(),
@@ -1385,6 +1389,7 @@ server <- function(input, output, session) {
         y="Risk Prediction")
   })
   
+  # RENDER SUMMARY TABLES -output$baseinputs- IN ANALYSIS PAGE ====
   output$baseinputs <- renderTable({
     data.frame(
       "Inputs"=c(
@@ -1395,7 +1400,51 @@ server <- function(input, output, session) {
       )
     )
   })
+  
+  output$baseinputs1 <- renderTable({
+    data.frame(
+      "Inputs"=c(
+        input$lulc.pothole1,
+        input$lulc.field1,
+        input$Drainage1,
+        input$Tillage1
+      )
+    )
+  })
 
+  output$baseinputs2 <- renderTable({
+    data.frame(
+      "Inputs"=c(
+        input$lulc.pothole2,
+        input$lulc.field2,
+        input$Drainage2,
+        input$Tillage2
+      )
+    )
+  })
+  
+  output$baseinputs3 <- renderTable({
+    data.frame(
+      "Inputs"=c(
+        input$lulc.pothole3,
+        input$lulc.field3,
+        input$Drainage3,
+        input$Tillage3
+      )
+    )
+  })
+  
+  output$baseinputs4 <- renderTable({
+    data.frame(
+      "Inputs"=c(
+        input$lulc.pothole4,
+        input$lulc.field4,
+        input$Drainage4,
+        input$Tillage4
+      )
+    )
+  })
+  
   # MAINTAIN LOGIC DURING ALTERNATIVE ASSESSMENT INPUTS (CONTINUITY) =====
   observe({
     if (input$lulc.field == "Perennial Cover (Conservation Reserve, Grassed, etc.)" & input$lulc.pothole == "Corn-Soybean Rotation" |

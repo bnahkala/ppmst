@@ -5,13 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "177095280",
+    "hash" : "2294736318",
     "id" : "5B233E60",
-    "lastKnownWriteTime" : 1592925307,
-    "last_content_update" : 1592925307,
+    "lastKnownWriteTime" : 1593789384,
+    "last_content_update" : 1593789384680,
     "path" : "C:/github/ppmst/app.R",
     "project_path" : "app.R",
     "properties" : {
+        "cursorPosition" : "1442,22",
+        "scrollLine" : "1419"
     },
     "read_only" : false,
     "read_only_alternatives" : [
