@@ -1232,11 +1232,11 @@ server <- function(input, output, session) {
   })
   
   max.flow.path_ft <- reactive({
-    max.flow.path1() * 3.28
+    round(max.flow.path1() * 3.28, 0)
   })
   
   max.relief_ft <- reactive({
-    max.relief1() * 3.28
+    round(max.relief1() * 3.28, 1)
   })
   
     # ALT 1 -rf.alternative.pred1()- with -.min,. .max- ====
