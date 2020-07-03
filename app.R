@@ -1,5 +1,5 @@
 # AUTHOR: BRADY NAHKALA
-# LAST REVISED: 22 June 2020
+# LAST REVISED: 3 July 2020
 # LICENSE =====
 
 # Copyright (C)
@@ -132,28 +132,28 @@ ui <-
                 sliderInput(
                   "area_estimate",
                   "Decimal:",
-                  label = "7. Estimate the maximum land extent of the pothole (ha)",
-                  value = 1.3,
+                  label = "7. Estimate the maximum land extent of the pothole (acres)",
+                  value = 3.2,
                   min = 0,
-                  max = 10,
+                  max = 25,
                   step = 0.1
                 ),
                 sliderInput(
                   "h2oshed_estimate",
                   "Decimal:",
-                  label = "8. Estimate the contributing flow area to the pothole (ha)",
-                  value = 8.1,
+                  label = "8. Estimate the contributing flow area to the pothole (acres)",
+                  value = 20,
                   min = 1,
-                  max = 200,
+                  max = 500,
                   step = 0.1
                 ),
                 sliderInput(
                   "max.depth",
                   "Decimal:",
-                  label = "9. Estimate the maximum flooding depth of the pothole (m)",
-                  value = 0.5,
+                  label = "9. Estimate the maximum flooding depth of the pothole (feet)",
+                  value = 1.6,
                   min = 0,
-                  max = 5,
+                  max = 15,
                   step = 0.1
                 ),
                 sliderInput(
@@ -268,27 +268,27 @@ ui <-
                   "area_estimate1",
                   "Decimal:",
                   label = "Estimate the maximum land extent of the pothole (ha)",
-                  value = 1.4,
+                  value = 3.2,
                   min = 0,
-                  max = 10,
+                  max = 25,
                   step = 0.1
                 ),
                 sliderInput(
                   "h2oshed_estimate1",
                   "Decimal:",
                   label = "Estimate the contributing flow area to the pothole (ha)",
-                  value = 8.1,
+                  value = 20,
                   min = 1,
-                  max = 200,
+                  max = 500,
                   step = 0.1
                 ),
                 sliderInput(
                   "max.depth1",
                   "Decimal:",
                   label = "Estimate the maximum flooding depth of the pothole (m)",
-                  value = 0.5,
+                  value = 1.6,
                   min = 0,
-                  max = 5,
+                  max = 15,
                   step = 0.1
                 ),
                 sliderInput(
@@ -572,31 +572,7 @@ ui <-
               tableOutput("risk_interpretation")
             )
           ),
-          # FUTURE OUTPUT ====
-          # fluidRow(
-          #   box(
-          #     solidHeader = T,
-          #     collapsible = T,
-          #     collapsed = T,
-          #     title = "Economic Summary",
-          #     status = "danger",
-          #     height = NULL,
-          #     width = 12,
-          #     em("In Development")
-          #   )
-          # ),
-          # fluidRow(
-          #   box(
-          #     solidHeader = T,
-          #     collapsible = T,
-          #     collapsed = T,
-          #     title = "Environmental Summary",
-          #     status = "danger",
-          #     height = NULL,
-          #     width = 12,
-          #     em("In Development")
-          #   )
-          # ),
+         
           # FOOTER ======
           fluidRow(
             style = "background-color:#f3f3f3;",
@@ -635,13 +611,6 @@ ui <-
                   target = "_blank"
                 )
               ),
-              # tags$div(
-              #   "If you have questions about the status",
-              #   br(),
-              #   "of the PPMST, contact:",
-              #   br(),
-              #   "kaleita@iastate.edu"
-              # ),
               h1()
             )
           )
@@ -766,22 +735,6 @@ ui <-
                    )
                  ),
                  h1(),
-                 # h1(),
-                 # img(
-                 #   src = "ISU.png",
-                 #   href = "https://www.iastate.edu",
-                 #   height = 95,
-                 #   width = 300,
-                 #   style = "display: block; margin-left: auto; margin-right: auto;"
-                 # ),
-                 # img(
-                 #   src = "coe.png",
-                 #   href = "https://www.engineering.iastate.edu/",
-                 #   height = 40,
-                 #   width = 300,
-                 #   style = "display: block; margin-left: auto; margin-right: auto;"
-                 # ),
-                 # h1()
                ),
                column(
                  4,
@@ -806,13 +759,6 @@ ui <-
                           target = "_blank"
                         )
                       ),
-                      # tags$div(
-                      #   "If you have questions about the status",
-                      #   br(),
-                      #   "of the PPMST, contact:",
-                      #   br(),
-                      #   "kaleita@iastate.edu"
-                      # ),
                       h1())
              )
     )
@@ -851,8 +797,8 @@ server <- function(input, output, session) {
       group = "NAIP 2010"
     ) %>%
       leaflet.extras2::addWMS(
-        "https://ortho.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer?request=GetCapabilities&service",
-        # "https://athene.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer",
+        # "https://ortho.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer?request=GetCapabilities&service",
+        "https://athene.gis.iastate.edu/arcgis/services/ortho/lidar_dem_3m/ImageServer/WMSServer",
         layers = "lidar_dem_3m",
         options = WMSTileOptions(
           format = "image/png",
@@ -884,17 +830,7 @@ server <- function(input, output, session) {
         secondaryAreaUnit = "acres",
         activeColor = "#8B0000",
         completedColor = "#228B22"
-      ) #%>%
-      # addDrawToolbar(
-      #   polylineOptions = FALSE,
-      #   polygonOptions = TRUE,
-      #   rectangleOptions = F,
-      #   circleOptions = F,
-      #   markerOptions = FALSE,
-      #   circleMarkerOptions = FALSE,
-      #   singleFeature = TRUE,
-      #   editOptions = editToolbarOptions()
-      # )
+      ) 
   })
   
     # MAP OUTPUT =====
@@ -928,8 +864,6 @@ server <- function(input, output, session) {
     }
   })
   
-  # RENDER EXAMPLE TABLE -output$rFInfo- IN TECHNICAL ABOUT THE TOOL SECTION =====
-  
   # RENDER TABLE of RISK INTERPRETATION -output$risk_interpretation- =====
   output$risk_interpretation <- renderTable({
     riskInfo
@@ -939,6 +873,20 @@ server <- function(input, output, session) {
   output$frame <- renderUI({
     tags$iframe(style="height:600px; width:100%; scrolling=yes",
                 src="PPMST_Manual_v1.pdf")
+  })
+  
+  # CONVERSIONS FROM INPUTS =====
+  
+  area_estimate_ha <- reactive({
+    input$area_estimate / 2.47
+  })
+
+  h2oshed_estimate_ha <- reactive({
+    input$h2oshed_estimate / 2.47
+  })
+
+  max.depth_m <- reactive({
+    input$max.depth / 3.28
   })
   
   # SAVE POTHOLE DEFAULTS -input$SaveDefaults- =================
@@ -953,7 +901,7 @@ server <- function(input, output, session) {
       inputId = "area_estimate1",
       val = val1,
       min = 0,
-      max = 10,
+      max = 25,
       step = 0.1
     )
     updateSliderInput(
@@ -961,7 +909,7 @@ server <- function(input, output, session) {
       inputId = "h2oshed_estimate1",
       val = val2,
       min = 1,
-      max = 200,
+      max = 500,
       step = 0.1
     )
     updateSliderInput(
@@ -969,7 +917,7 @@ server <- function(input, output, session) {
       inputId = "max.depth1",
       val = val3,
       min = 0,
-      max = 5,
+      max = 15,
       step = 0.1
     )
     updateSliderInput(
@@ -980,71 +928,85 @@ server <- function(input, output, session) {
       max = 15,
       step = 0.1
     )
-    
+  })
+  
+  observeEvent(input$SaveDefaults, {
+    delay(1000) 
+          
     # DEFAULTS POP-UP ====
     if (rf.sample.pred() >= 5) {
       # HIGH RISK WARNING =====
-      showModal(
-        modalDialog(
-          title = "Warning Message", 
-          tags$div(
-            strong("Baseline Pothole Risk: "), 
-            strong(rf.sample.pred(), style = "color:red"), 
-            "out of 10.",
-            br(),
-            br(),
-            "In current conditions, your pothole is considered high risk with regards to flooding. 
-              Additional drainage or significant land retirement would likely reduce the risk of this pothole. 
-              If it has existing drainage, it is likely that the flood conditions of the pothole will not significantly 
+      showModal(modalDialog(
+        title = "Warning Message",
+        tags$div(
+          strong("Baseline Pothole Risk: "),
+          strong(rf.sample.pred(), style = "color:red"),
+          "out of 10.",
+          br(),
+          br(),
+          "In current conditions, your pothole is considered high risk with regards to flooding.
+              Additional drainage or significant land retirement would likely reduce the risk of this pothole.
+              If it has existing drainage, it is likely that the flood conditions of the pothole will not significantly
               improve with further infrastructure. ",
-            br(), br(), 
-            "Continue to the 'Analysis' tab."
-          ),
-          easyClose = T
-        )
-      )
+          br(),
+          br(),
+          "Continue to the 'Analysis' tab."
+        ),
+        easyClose = T
+      ))
     } else if (rf.sample.pred() >= 3) {
       # MEDIUM RISK WARNING =====
-      showModal(
-        modalDialog(
-          title = "Warning Message", 
-          tags$div(
-            strong("Baseline Pothole Risk: "), 
-            strong(rf.sample.pred(), style = "color:orange"), 
-            "out of 10.",
-            br(),
-            br(),
-            "In current conditions, your pothole is considered medium risk with regards to flooding. 
-              Additional drainage may moderately improve flood conditions. Pothole retirement and conservation 
+      showModal(modalDialog(
+        title = "Warning Message",
+        tags$div(
+          strong("Baseline Pothole Risk: "),
+          strong(rf.sample.pred(), style = "color:orange"),
+          "out of 10.",
+          br(),
+          br(),
+          "In current conditions, your pothole is considered medium risk with regards to flooding.
+              Additional drainage may moderately improve flood conditions. Pothole retirement and conservation
               tillage practices may be the only options available to reduce the overall risk of the pothole.",
-            br(), br(), 
-            "Continue to the 'Analysis' tab."
-          ),
-          easyClose = T
-        )
-      )
+          br(),
+          br(),
+          "Continue to the 'Analysis' tab."
+        ),
+        easyClose = T
+      ))
     } else {
       # LOW RISK WARNING =====
-      showModal(
-        modalDialog(
-          title = "Informational Message", 
-          tags$div(
-            strong("Baseline Pothole Risk: "), 
-            strong(rf.sample.pred(), style = "color:green"), 
-            "out of 10.",
-            br(),
-            br(),
-            "In current conditions, your pothole is considered low risk with regards to flooding. 
-              Most management and drainage actions will not significantly change flood risk or change 
+      showModal(modalDialog(
+        title = "Informational Message",
+        tags$div(
+          strong("Baseline Pothole Risk: "),
+          strong(rf.sample.pred(), style = "color:green"),
+          "out of 10.",
+          br(),
+          br(),
+          "In current conditions, your pothole is considered low risk with regards to flooding.
+              Most management and drainage actions will not significantly change flood risk or change
               the impact of flooding on crop survival, based on the range of flooding observed in modeling studies.",
-            br(), br(), 
-            "Continue to the 'Analysis' tab."
-          ),
-          easyClose = T
-        )
-      )
+          br(),
+          br(),
+          "Continue to the 'Analysis' tab."
+        ),
+        easyClose = T
+      ))
     }
-    
+  })
+  
+  # CONVERSIONS FROM INPUTS/Analysis Page =====
+  
+  area_estimate_ha1 <- reactive({
+    input$area_estimate1 / 2.47
+  })
+  
+  h2oshed_estimate_ha1 <- reactive({
+    input$h2oshed_estimate1 / 2.47
+  })
+  
+  max.depth_m1 <- reactive({
+    input$max.depth1 / 3.28
   })
   
   # RENDER RISK SUMMARY =====
@@ -1128,13 +1090,13 @@ server <- function(input, output, session) {
   max.flow.path <- reactive({
     if (input$field.position == "Circular") {
       # circular
-      round((2*sqrt((input$h2oshed_estimate*10000) / 3.1415)) - (sqrt((input$area_estimate*10000) / 3.1415)), 0)
+      round((2*sqrt((h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
     } else {
       # ellipsoidal
-      round((2*sqrt((2*input$h2oshed_estimate*10000) / 3.1415)) - (sqrt((input$area_estimate*10000) / 3.1415)), 0)
+      round((2*sqrt((2*h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
     }
   })
-  
+
   max.relief <- reactive({
       max.flow.path() * input$watershed.slope / 100
   })
@@ -1153,10 +1115,10 @@ server <- function(input, output, session) {
               as.character(input$Tillage),
               as.character(input$lulc.pothole),
               as.character(input$lulc.field),
-              as.numeric(round(input$h2oshed_estimate / input$area_estimate, digits=1)),
+              as.numeric(round(h2oshed_estimate_ha() / area_estimate_ha(), digits=1)),
               as.numeric(max.relief()),
               as.numeric(max.flow.path()),
-              as.numeric(input$max.depth)),
+              as.numeric(max.depth_m())),
       stringsAsFactors = FALSE
     )
   })
@@ -1169,11 +1131,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole),
         as.character(input$lulc.field),
         as.numeric(
-          round(input$h2oshed_estimate1 / input$area_estimate1, digits = 1)
+          round(h2oshed_estimate_ha() / area_estimate_ha(), digits = 1)
         ),
-        as.numeric(max.relief1()),
-        as.numeric(max.flow.path1()),
-        as.numeric(input$max.depth1)
+        as.numeric(max.relief()),
+        as.numeric(max.flow.path()),
+        as.numeric(max.depth_m())
       )
   })
   
@@ -1203,7 +1165,7 @@ server <- function(input, output, session) {
   
   # MAINTAIN LOGIC DURING VARIABLE INPUT =====
   observe({
-    if (max.relief1() < input$max.depth1) {
+    if (max.relief1() < max.depth_m1()) {
       showModal(
         modalDialog(
           title = "Error Message", 
@@ -1219,7 +1181,7 @@ server <- function(input, output, session) {
   })
   
   observe({
-    if (input$area_estimate1 > input$h2oshed_estimate1) {
+    if (area_estimate_ha1() > h2oshed_estimate_ha1()) {
       showModal(
         modalDialog(
           title = "Error Message", 
@@ -1254,15 +1216,23 @@ server <- function(input, output, session) {
 
     if (input$field.position == "Circular") {
       # circular watershed
-      round((2*sqrt((input$h2oshed_estimate1*10000) / 3.1415)) - (sqrt((input$area_estimate1*10000) / 3.1415)), 0)
+      round((2*sqrt((h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
     } else {
       # ellipsoidal
-      round((2*sqrt((2*input$h2oshed_estimate1*10000) / 3.1415)) - (sqrt((input$area_estimate1*10000) / 3.1415)), 0)
+      round((2*sqrt((2*h2oshed_estimate_ha1()*10000) / 3.1415)) - (sqrt((area_estimate_ha1()*10000) / 3.1415)), 0)
     }
   })
   
   max.relief1 <- reactive({
     max.flow.path1() * input$watershed.slope1 / 100
+  })
+  
+  max.flow.path_ft <- reactive({
+    max.flow.path1() * 3.28
+  })
+  
+  max.relief_ft <- reactive({
+    max.relief1() * 3.28
   })
   
     # ALT 1 -rf.alternative.pred1()- with -.min,. .max- ====
@@ -1273,11 +1243,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole1),
         as.character(input$lulc.field1),
         as.numeric(
-          round(input$h2oshed_estimate1 / input$area_estimate1, digits = 1)
+          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
         ),
         as.numeric(max.relief1()),
         as.numeric(max.flow.path1()),
-        as.numeric(input$max.depth1)
+        as.numeric(max.depth_m1())
       )
   })
   
@@ -1301,11 +1271,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole2),
         as.character(input$lulc.field2),
         as.numeric(
-          round(input$h2oshed_estimate1 / input$area_estimate1, digits = 1)
+          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
         ),
         as.numeric(max.relief1()),
         as.numeric(max.flow.path1()),
-        as.numeric(input$max.depth1)
+        as.numeric(max.depth_m1())
       )
   })
   
@@ -1329,11 +1299,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole3),
         as.character(input$lulc.field3),
         as.numeric(
-          round(input$h2oshed_estimate1 / input$area_estimate1, digits = 1)
+          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
         ),
         as.numeric(max.relief1()),
         as.numeric(max.flow.path1()),
-        as.numeric(input$max.depth1)
+        as.numeric(max.depth_m1())
       )
   })
   
@@ -1357,11 +1327,11 @@ server <- function(input, output, session) {
         as.character(input$lulc.pothole4),
         as.character(input$lulc.field4),
         as.numeric(
-          round(input$h2oshed_estimate1 / input$area_estimate1, digits = 1)
+          round(h2oshed_estimate_ha1() / area_estimate_ha1(), digits = 1)
         ),
         as.numeric(max.relief1()),
         as.numeric(max.flow.path1()),
-        as.numeric(input$max.depth1)
+        as.numeric(max.depth_m1())
       )
   })
   
@@ -1425,47 +1395,6 @@ server <- function(input, output, session) {
       )
     )
   })
-  
-  # RENDER SUMMARY BOXPLOTS -output$daysXX- IN ALTERNATIVES =====
-  # baserow <- reactive({
-  #   as.numeric(findInterval(rf.sample.pred(), riskMatrix$Risk))
-  # })
-  # 
-  # altrow1 <- reactive({
-  #   as.numeric(findInterval(rf.alternative.pred1(), riskMatrix$Risk))
-  # })
-  # altrow2 <- reactive({
-  #   as.numeric(findInterval(rf.alternative.pred2(), riskMatrix$Risk))
-  # })
-  # altrow3 <- reactive({
-  #   as.numeric(findInterval(rf.alternative.pred3(), riskMatrix$Risk))
-  # })
-  # altrow4 <- reactive({
-  #   as.numeric(findInterval(rf.alternative.pred4(), riskMatrix$Risk))
-  # })
-  
-  # EXAMPLE BOXPLOT. TO REPLICATE, CHANGE ALTROW() AND OUTPUT OBJECT INTEGER
-  # output$days1 <- renderPlot({
-  #   ggplot(riskMatrix[altrow1(), ],
-  #     aes(
-  #       x = as.factor(Risk),
-  #       ymin = days.min,
-  #       lower = days.Q1,
-  #       middle = days.med,
-  #       upper = days.Q3,
-  #       ymax = days.max
-  #     )
-  #   ) +
-  #     geom_boxplot(stat = "identity")+
-  #     theme_minimal()+
-  #     theme(axis.text.x = element_blank())+
-  #     ylim(0, 150)+
-  #     labs(
-  #       x=NULL,
-  #       y="Annual Days Flooded"
-  #     )+
-  #   theme(plot.margin=unit(c(0,0,0,0),"mm"))
-  # }, height=200)
 
   # MAINTAIN LOGIC DURING ALTERNATIVE ASSESSMENT INPUTS (CONTINUITY) =====
   observe({
@@ -1535,11 +1464,11 @@ server <- function(input, output, session) {
       ),
       "CountyID" = c(rep(input$cnty, 5)),
       "FieldID" = c(rep(input$field)),
-      "Pothole Area" = c(rep(input$area_estimate, 5)),
-      "Watershed Area" = c(rep(input$h2oshed_estimate, 5)),
-      "Maximum Depth" = c(rep(input$max.depth, 5)),
-      "Watershed Relief" = c(rep(max.relief(), 5)),
-      "Maximum Flow Path" = c(rep(max.flow.path(), 5)),
+      "Pothole Area" = c(rep(input$area_estimate1, 5)),
+      "Watershed Area" = c(rep(input$h2oshed_estimate1, 5)),
+      "Maximum Depth" = c(rep(input$max.depth1, 5)),
+      "Watershed Relief" = c(rep(max.relief_ft(), 5)),
+      "Maximum Flow Path" = c(rep(max.flow.path_ft(), 5)),
       "LULC of Pothole" = c(
         input$lulc.pothole,
         input$lulc.pothole1,
