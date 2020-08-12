@@ -172,7 +172,7 @@ ui <-
                     "Ellipsoidal"
                   )
                 ),
-                actionButton(inputId = "SaveDefaults", label = "Copy to Analysis")
+                actionButton(inputId = "SaveDefaults", label = "Calculate Flood Risk")
               ),
               
               # MAP PANEL ===============================
