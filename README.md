@@ -15,5 +15,7 @@ The PPMST provides users with a handful of functional features that may be furth
 
 Included in the App are the User's Manual and links to supporting publications of the modeling studies. 
 
+![Snapshot of the GUI for the PPMST.](https://github.com/bnahkala/ppmst/tree/master/img\Interface.png)
+
 The PPMST was developed by Brady Nahkala as part of his MS Thesis at Iowa State University. This project was part of a larger effort funded by the EPA to monitor, model and develop tools to support the assessment of prairie potholes. 
 
